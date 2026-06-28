@@ -2,8 +2,6 @@
 
 **Local-first collaborative document editor** with offline sync, deterministic conflict resolution, version history, role-based access, and AI assistance.
 
-Built with **Next.js** — frontend and backend live in the same repo. The browser treats **IndexedDB** as the source of truth; the server stores the durable op log in **MongoDB**.
-
 ---
 
 ## Table of Contents
@@ -18,9 +16,7 @@ Built with **Next.js** — frontend and backend live in the same repo. The brows
 - [API Routes](#api-routes)
 - [Project Structure](#project-structure)
 - [Scripts](#scripts)
-- [Deploy to Vercel](#deploy-to-vercel)
-- [Security](#security)
-- [License](#license)
+
 
 ---
 
@@ -290,105 +286,6 @@ chronicle/
 
 ---
 
-## Deploy to Vercel
-
-Chronicle deploys as a single Next.js app on Vercel (frontend + API together).
-
-### Step 1 — Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/chronicle.git
-git push -u origin main
-```
-
-Ensure `.env.local` is **not** tracked (it is listed in `.gitignore`).
-
-### Step 2 — MongoDB Atlas for production
-
-1. In Atlas → **Network Access** → add `0.0.0.0/0` (Vercel uses dynamic IPs)
-2. Confirm your database user and connection string work
-
-### Step 3 — Import on Vercel
-
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import your GitHub repository
-3. If Chronicle is in a subfolder, set **Root Directory** to `chronicle`
-4. Framework: **Next.js** (auto-detected)
-5. Build command: `npm run build` (default)
-
-### Step 4 — Add environment variables
-
-In **Project → Settings → Environment Variables**, add:
-
-| Variable | Value |
-|----------|-------|
-| `AUTH_SECRET` | New random secret (do not reuse dev secret) |
-| `MONGODB_URI` | Your Atlas connection string |
-| `AUTH_URL` | `https://your-project.vercel.app` (update after first deploy) |
-| `GEMINI_API_KEY` | Your Gemini key (optional) |
-| `GEMINI_MODEL` | `gemini-2.5-flash` |
-
-Apply to **Production** (and **Preview** if you want preview deploys to work).
-
-### Step 5 — Deploy
-
-Click **Deploy** and wait for the build to finish.
-
-### Step 6 — Fix `AUTH_URL` and redeploy
-
-1. Copy your live Vercel URL (e.g. `https://chronicle-abc123.vercel.app`)
-2. Update `AUTH_URL` in Vercel environment variables to that exact URL
-3. **Redeploy:** Deployments → ⋯ → Redeploy
-
-### Step 7 — Verify production
-
-1. Open your Vercel URL
-2. Register / log in
-3. Create a document, edit, rename title, test sync
-4. Test collaborators and AI (if `GEMINI_API_KEY` is set)
-
-### Deploy with Vercel CLI (optional)
-
-```bash
-npm i -g vercel
-cd chronicle
-vercel login
-vercel
-vercel env add AUTH_SECRET
-vercel env add MONGODB_URI
-vercel env add AUTH_URL
-vercel --prod
-```
-
-### Common deployment issues
-
-| Issue | Solution |
-|-------|----------|
-| Build fails on Vercel | Run `npm run build` locally and fix errors first |
-| MongoDB connection error | Whitelist `0.0.0.0/0` in Atlas; check URI password |
-| Login/session broken | Set `AUTH_URL` to exact production URL and redeploy |
-| AI not working | Add `GEMINI_API_KEY` in Vercel env vars |
-| Wrong app deployed | Set correct **Root Directory** if repo is not at root |
-
----
-
-## Security
-
-See [SECURITY.md](./SECURITY.md) for the threat model, mitigations (Zod validation, payload caps, role enforcement, tenant scoping), and contingency plans.
-
-**Production checklist:**
-
-- Use strong, unique `AUTH_SECRET`
-- Never commit secrets to Git
-- Rotate API keys and DB passwords if they were ever exposed
-- Restrict MongoDB network access when possible
-
----
-
 ## Author
 
 **Anshu Kumar Bishwas**
@@ -398,6 +295,4 @@ See [SECURITY.md](./SECURITY.md) for the threat model, mitigations (Zod validati
 
 ---
 
-## License
 
-MIT
